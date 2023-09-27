@@ -9,18 +9,34 @@
     <version>1.0-SNAPSHOT</version>
 
     <properties>
+        <java.version>17</java.version>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <lombok.ver>1.18.30</lombok.ver>
+        <slf4j.ver>1.7.36</slf4j.ver>
     </properties>
 
     <dependencies>
+
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>${lombok.ver}</version>
             <scope>provided</scope>
         </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.ver}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>${slf4j.ver}</version>
+        </dependency>
+
     </dependencies>
 
 </project>
