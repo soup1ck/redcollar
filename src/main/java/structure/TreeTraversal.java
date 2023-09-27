@@ -1,6 +1,6 @@
 package structure;
 
 public interface TreeTraversal {
-    boolean yesNodeTraversal(Node currNode, String userAnswer);
-    boolean noNodeTraversal(Node currNode, String userAnswer);
+    boolean nodeTraversal(Node currNode);
+    boolean fullTreeTraversal(Node currNode, String userAnswer);
 }

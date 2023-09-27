@@ -1,34 +1,30 @@
 import data.KnowledgeBase;
+import data.Messages;
+import handler.InputOutputHandler;
 import structure.Node;
 import structure.TreeTraversal;
 import structure.TreeTraversalImpl;
 
-import java.util.Scanner;
+import java.io.IOException;
 
 public class Game {
 
     private final KnowledgeBase knowledgeBase = new KnowledgeBase();
     private final Node root = knowledgeBase.createRootNode();
     private final TreeTraversal treeTraversal = new TreeTraversalImpl();
-    private final Scanner scanner = new Scanner(System.in);
+    private final InputOutputHandler inputOutputHandler = new InputOutputHandler();
 
     public void playGame() {
-        Node currNode = root;
-        boolean flag = true;
-        System.out.println(currNode.getQuestion());
-        String userAnswer = scanner.nextLine().toLowerCase();
-        while (flag) {
-            switch (userAnswer) {
-                case "да":
-                    flag = treeTraversal.yesNodeTraversal(currNode, userAnswer);
-                    playGame();
-                case "нет":
-                    flag = treeTraversal.noNodeTraversal(currNode, userAnswer);
-                    playGame();
-                default:
-                    System.out.println("Введите да/нет");
-                    playGame();
+        try {
+            boolean flag = true;
+            inputOutputHandler.displayMessage(Messages.START_MESSAGE.label);
+            String userAnswer = inputOutputHandler.getInput();
+            while (flag) {
+                flag = treeTraversal.fullTreeTraversal(root, userAnswer);
+                playGame();
             }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
