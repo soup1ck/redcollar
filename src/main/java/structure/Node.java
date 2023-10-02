@@ -3,6 +3,7 @@ package structure;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
 @Getter
 @Setter
@@ -13,6 +14,8 @@ public class Node {
     private final String question;
     private Node yes;
     private Node no;
+
+    @Accessors(fluent = true)
     private boolean hasNext;
 
     public void addNode (Node currNode, String nodeName, String property) {
@@ -21,6 +24,6 @@ public class Node {
                 .question("Это " + property + "?")
                 .build());
         currNode.setYes(currNode);
-        currNode.setHasNext(true);
+        currNode.hasNext(true);
     }
 }

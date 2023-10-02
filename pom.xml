@@ -13,7 +13,10 @@
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <lombok.ver>1.18.30</lombok.ver>
-        <slf4j.ver>1.7.36</slf4j.ver>
+        <slf4j.ver>2.0.5</slf4j.ver>
+        <junit.ver>5.9.3</junit.ver>
+        <mockit.ver>5.2.0</mockit.ver>
+        <logback.ver>1.4.5</logback.ver>
     </properties>
 
     <dependencies>
@@ -30,11 +33,24 @@
             <artifactId>slf4j-api</artifactId>
             <version>${slf4j.ver}</version>
         </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>${logback.ver}</version>
+        </dependency>
+
 
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-simple</artifactId>
-            <version>${slf4j.ver}</version>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>${junit.ver}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>${mockit.ver}</version>
+            <scope>test</scope>
         </dependency>
 
     </dependencies>

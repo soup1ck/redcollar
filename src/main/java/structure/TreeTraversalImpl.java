@@ -3,10 +3,9 @@ package structure;
 import data.KnowledgeBase;
 import data.Messages;
 import exception.AnimalContainsException;
-import handler.InputOutputHandler;
+import utils.InputOutputUtils;
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.IOException;
 import java.util.Set;
 
 @Slf4j
@@ -14,91 +13,81 @@ public class TreeTraversalImpl implements TreeTraversal {
 
     private final KnowledgeBase knowledgeBase = new KnowledgeBase();
     private final Set<String> setOfAnimals = knowledgeBase.createSetOfAnimals();
-    private final InputOutputHandler inputOutputHandler = new InputOutputHandler();
+    private final InputOutputUtils inputOutputUtils = new InputOutputUtils();
 
     @Override
-    public boolean nodeTraversal(Node currNode) {
-        try {
-            inputOutputHandler.displayMessage(currNode.getQuestion());
-            String userAnswer1 = inputOutputHandler.getInput();
-            if (userAnswer1.equals(Messages.YES.label)) {
-                inputOutputHandler.displayWinningMsg(currNode);
+    public boolean traverseNode(Node currNode) {
+        inputOutputUtils.displayMessage(currNode.getQuestion());
+        String userAnswer = inputOutputUtils.getInput();
+        if (inputOutputUtils.checkAnswer(userAnswer)) {
+            if (userAnswer.equals(Messages.YES)) {
+                inputOutputUtils.displayMessageNode(Messages.WINNING_MSG,
+                        currNode.getAnimalName());
                 return false;
-            } else if (userAnswer1.equals(Messages.NO.label) && !currNode.isHasNext()) {
-                try {
-                    addNewAnimal(currNode);
-                } catch (AnimalContainsException e) {
-                    log.info(e.getMessage());
-                }
+            }
+            if (userAnswer.equals(Messages.NO) && !currNode.hasNext()) {
+                addNewAnimal(currNode);
                 return true;
             }
-            return deepCrawl(currNode, true, userAnswer1);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
+            return traverseNodeToTheEnd(currNode);
         }
+        else {
+            inputOutputUtils.displayMessage(Messages.WRONG_INPUT);
+            traverseNode(currNode);
+        }
+        return false;
     }
 
-    @Override
-    public boolean fullTreeTraversal(Node currNode, String userAnswer) {
+    public boolean traverseNodeToTheEnd(Node currNode) {
         boolean flag = true;
         while (flag) {
-            switch (userAnswer) {
-                case "да" -> {
-                    flag = nodeTraversal(currNode.getYes());
-                }
-                case "нет" -> {
-                    flag = nodeTraversal(currNode.getNo());
-                }
-                default -> {
-                    System.out.println("Введите да/нет");
+            inputOutputUtils.displayMessage(currNode.getNo().getQuestion());
+            String userAnswer = inputOutputUtils.getInput();
+            if (inputOutputUtils.checkAnswer(userAnswer)) {
+                currNode = currNode.getNo();
+                if (userAnswer.equals(Messages.YES)) {
+                    inputOutputUtils.displayMessageNode(Messages.WINNING_MSG,
+                            currNode.getAnimalName());
                     flag = false;
                 }
-            }
-        }
-        return flag;
-    }
-
-    public boolean deepCrawl(Node currNode, boolean flag,
-                             String userAnswer1) {
-        while (flag) {
-            if (userAnswer1.equals(Messages.NO.label) && currNode.isHasNext()) {
-                currNode = currNode.getNo();
-                try {
-                    inputOutputHandler.displayMessage(currNode.getQuestion());
-                    String userAnswer3 = inputOutputHandler.getInput();
-                    if (userAnswer3.equals(Messages.YES.label)) {
-                        inputOutputHandler.displayWinningMsg(currNode);
-                        flag = false;
-                    } else if (userAnswer3.equals(Messages.NO.label) && !currNode.isHasNext()) {
-                        try {
-                            addNewAnimal(currNode);
-                        } catch (AnimalContainsException e) {
-                            log.info(e.getMessage());
-                        }
-                        return true;
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    return false;
+                if (userAnswer.equals(Messages.NO) && !currNode.hasNext()) {
+                    addNewAnimal(currNode);
+                    return true;
                 }
+            }
+            else {
+                inputOutputUtils.displayMessage(Messages.WRONG_INPUT);
             }
         }
         return false;
     }
 
-    public void addNewAnimal(Node node) throws AnimalContainsException {
-        try {
-            inputOutputHandler.displayMessage(Messages.MISTAKE.label);
-            String newNodeName = inputOutputHandler.getInput();
-            if (setOfAnimals.contains(newNodeName)) {
-                throw new AnimalContainsException(Messages.ANIMAL_CONTAINS_EXC.label);
+    @Override
+    public void traverseFullTree(Node currNode, String userAnswer) {
+        boolean flag = true;
+        while (flag) {
+            switch (userAnswer) {
+                case "да" -> flag = traverseNode(currNode.getYes());
+                case "нет" -> flag = traverseNode(currNode.getNo());
+                default -> System.out.println(Messages.WRONG_INPUT);
             }
-            inputOutputHandler.displayDiffMsg(node);
-            String userAnswerDiff = inputOutputHandler.getInput();
+        }
+    }
+
+    public void addNewAnimal(Node node) {
+        try {
+            inputOutputUtils.displayMessage(Messages.MISTAKE);
+            String newNodeName = inputOutputUtils.getInput();
+            if (setOfAnimals.contains(newNodeName)) {
+                throw new AnimalContainsException(Messages.ANIMAL_CONTAINS_EXC);
+            }
+            String userAnswerDiff = inputOutputUtils
+                    .getDifference(newNodeName, node.getAnimalName());
             node.addNode(node, newNodeName, userAnswerDiff);
-        } catch (IOException e) {
-            e.printStackTrace();
+            setOfAnimals.add(newNodeName);
+        } catch (AnimalContainsException e) {
+            log.error(e.getMessage());
+            System.out.println(e.getMessage());
         }
     }
 
