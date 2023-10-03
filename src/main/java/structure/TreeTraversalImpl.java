@@ -3,8 +3,8 @@ package structure;
 import data.KnowledgeBase;
 import data.Messages;
 import exception.AnimalContainsException;
-import utils.InputOutputUtils;
 import lombok.extern.slf4j.Slf4j;
+import utils.InputOutputUtils;
 
 import java.util.Set;
 
@@ -27,11 +27,10 @@ public class TreeTraversalImpl implements TreeTraversal {
             }
             if (userAnswer.equals(Messages.NO) && !currNode.hasNext()) {
                 addNewAnimal(currNode);
-                return true;
+                return false;
             }
             return traverseNodeToTheEnd(currNode);
-        }
-        else {
+        } else {
             inputOutputUtils.displayMessage(Messages.WRONG_INPUT);
             traverseNode(currNode);
         }
@@ -46,16 +45,33 @@ public class TreeTraversalImpl implements TreeTraversal {
             if (inputOutputUtils.checkAnswer(userAnswer)) {
                 currNode = currNode.getNo();
                 if (userAnswer.equals(Messages.YES)) {
-                    inputOutputUtils.displayMessageNode(Messages.WINNING_MSG,
-                            currNode.getAnimalName());
-                    flag = false;
+                    inputOutputUtils.displayMessage("Это " + currNode.getAnimalName() + "?");
+                    String secondAnswer = inputOutputUtils.getInput();
+                    if (inputOutputUtils.checkAnswer(secondAnswer)) {
+                        if (secondAnswer.equals(Messages.YES)) {
+                            inputOutputUtils.displayMessageNode(Messages.WINNING_MSG,
+                                    currNode.getAnimalName());
+                        }
+                        if (currNode.hasNext()) {
+                            if (secondAnswer.equals(Messages.YES)) {
+                                inputOutputUtils.displayMessageNode(Messages.WINNING_MSG, currNode.getAnimalName());
+                                return false;
+                            }
+                        }
+                        if (!currNode.hasNext()) {
+                            addNewAnimal(currNode);
+                            return false;
+                        }
+                    }
                 }
-                if (userAnswer.equals(Messages.NO) && !currNode.hasNext()) {
+                if (!currNode.hasNext()) {
                     addNewAnimal(currNode);
-                    return true;
+                    return false;
+                } else {
+                    traverseNodeToTheEnd(currNode);
                 }
-            }
-            else {
+                flag = false;
+            } else {
                 inputOutputUtils.displayMessage(Messages.WRONG_INPUT);
             }
         }
