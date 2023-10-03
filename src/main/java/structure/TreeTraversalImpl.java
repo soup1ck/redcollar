@@ -19,6 +19,10 @@ public class TreeTraversalImpl implements TreeTraversal {
     public boolean traverseNode(Node currNode) {
         inputOutputUtils.displayMessage(currNode.getQuestion());
         String userAnswer = inputOutputUtils.getInput();
+        if (!inputOutputUtils.checkAnswer(userAnswer)) {
+            inputOutputUtils.displayMessage(Messages.WRONG_INPUT);
+            traverseNode(currNode);
+        }
         if (inputOutputUtils.checkAnswer(userAnswer)) {
             if (userAnswer.equals(Messages.YES)) {
                 inputOutputUtils.displayMessageNode(Messages.WINNING_MSG,
@@ -30,9 +34,6 @@ public class TreeTraversalImpl implements TreeTraversal {
                 return false;
             }
             return traverseNodeToTheEnd(currNode);
-        } else {
-            inputOutputUtils.displayMessage(Messages.WRONG_INPUT);
-            traverseNode(currNode);
         }
         return false;
     }
